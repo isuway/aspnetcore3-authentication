@@ -28,8 +28,8 @@ namespace IdentityServer
 
             services.AddDbContext<AppDbContext>(config =>
             {
-                config.UseSqlServer(connectionString);
-                //config.UseInMemoryDatabase("Memory");
+                //config.UseSqlServer(connectionString);
+                config.UseInMemoryDatabase("Memory");
             });
 
             // AddIdentity registers the services
