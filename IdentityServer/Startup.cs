@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.OpenApi.Models;
 
 namespace IdentityServer
 {
@@ -32,7 +33,6 @@ namespace IdentityServer
                 config.UseInMemoryDatabase("Memory");
             });
 
-            // AddIdentity registers the services
             services.AddIdentity<IdentityUser, IdentityRole>(config =>
             {
                 config.Password.RequiredLength = 4;
@@ -43,7 +43,6 @@ namespace IdentityServer
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 
-            //var assembly = typeof(Startup).Assembly.GetName().Name;
 
             //var filePath = Path.Combine(_env.ContentRootPath, "is_cert.pfx");
             //var certificate = new X509Certificate2(filePath, "password");
@@ -59,6 +58,10 @@ namespace IdentityServer
                 .AddDeveloperSigningCredential();
 
             services.AddControllersWithViews();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "IdentityServer", Version = "v1" });
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -66,6 +69,8 @@ namespace IdentityServer
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "IdentityServer v1"));
             }
 
             app.UseRouting();
