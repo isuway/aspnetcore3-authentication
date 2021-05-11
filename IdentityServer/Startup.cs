@@ -43,41 +43,20 @@ namespace IdentityServer
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.ConfigureApplicationCookie(config =>
-            {
-                config.Cookie.Name = "IdentityServer.Cookie";
-                config.LoginPath = "/Auth/Login";
-                config.LogoutPath = "/Auth/Logout";
-            });
-
-            var assembly = typeof(Startup).Assembly.GetName().Name;
+            //var assembly = typeof(Startup).Assembly.GetName().Name;
 
             //var filePath = Path.Combine(_env.ContentRootPath, "is_cert.pfx");
             //var certificate = new X509Certificate2(filePath, "password");
 
             services.AddIdentityServer()
-                .AddAspNetIdentity<IdentityUser>()
-                //.AddConfigurationStore(options =>
-                //{
-                //    options.ConfigureDbContext = b => b.UseSqlServer(connectionString,
-                //        sql => sql.MigrationsAssembly(assembly));
-                //})
-                //.AddOperationalStore(options =>
-                //{
-                //    options.ConfigureDbContext = b => b.UseSqlServer(connectionString,
-                //        sql => sql.MigrationsAssembly(assembly));
-                //})
+                //.AddAspNetIdentity<IdentityUser>()
                 //.AddSigningCredential(certificate);
                 .AddInMemoryApiResources(Configuration.GetApis())
-                .AddInMemoryIdentityResources(Configuration.GetIdentityResources())
+                //.AddInMemoryIdentityResources(Configuration.GetIdentityResources())
                 .AddInMemoryClients(Configuration.GetClients())
+                .AddInMemoryApiScopes(Configuration.GetScopes())
+                .AddInMemoryPersistedGrants()
                 .AddDeveloperSigningCredential();
-
-            services.AddAuthentication()
-                .AddFacebook(config => {
-                    config.AppId = "3396617443742614";
-                    config.AppSecret = "secret";
-                });
 
             services.AddControllersWithViews();
         }
@@ -90,21 +69,17 @@ namespace IdentityServer
             }
 
             app.UseRouting();
-
             app.UseIdentityServer();
 
-            if(_env.IsDevelopment())
+            if (_env.IsDevelopment())
             {
                 app.UseCookiePolicy(new CookiePolicyOptions()
                 {
-                     MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.Lax
+                    MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.Lax
                 });
             }
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapDefaultControllerRoute();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapDefaultControllerRoute(); });
         }
     }
 }

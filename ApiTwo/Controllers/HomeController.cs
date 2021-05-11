@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
 using System.Threading.Tasks;
+using IdentityModel;
 
 namespace ApiTwo.Controllers
 {
@@ -20,16 +21,15 @@ namespace ApiTwo.Controllers
             //retrieve access token
             var serverClient = _httpClientFactory.CreateClient();
 
-            var discoveryDocument = await serverClient.GetDiscoveryDocumentAsync("http://localhost:5000/");
+            var discoveryDocument = await serverClient.GetDiscoveryDocumentAsync("https://localhost:5001/");
 
             var tokenResponse = await serverClient.RequestClientCredentialsTokenAsync(
                 new ClientCredentialsTokenRequest
                 {
                     Address = discoveryDocument.TokenEndpoint,
-
+                    
                     ClientId = "client_id",
                     ClientSecret = "client_secret",
-
                     Scope = "ApiOne",
                 });
 
@@ -38,7 +38,7 @@ namespace ApiTwo.Controllers
 
             apiClient.SetBearerToken(tokenResponse.AccessToken);
 
-            var response = await apiClient.GetAsync("http://localhost:5004/secret");
+            var response = await apiClient.GetAsync("https://localhost:5005/secret");
 
             var content = await response.Content.ReadAsStringAsync();
 
