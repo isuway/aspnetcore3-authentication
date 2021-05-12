@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IdentityServer.Data
 {
-    // IdentityDbContext contains all the user tables
     public class AppDbContext : IdentityDbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options)

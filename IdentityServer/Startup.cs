@@ -34,24 +34,29 @@ namespace IdentityServer
             });
 
             services.AddIdentity<IdentityUser, IdentityRole>(config =>
-            {
-                config.Password.RequiredLength = 4;
-                config.Password.RequireDigit = false;
-                config.Password.RequireNonAlphanumeric = false;
-                config.Password.RequireUppercase = false;
-            })
+                {
+                    config.Password.RequiredLength = 4;
+                    config.Password.RequireDigit = false;
+                    config.Password.RequireNonAlphanumeric = false;
+                    config.Password.RequireUppercase = false;
+                })
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.ConfigureApplicationCookie(config =>
+            {
+                config.Cookie.Name = "IdentityServer.Cookie";
+                config.LoginPath = "/Auth/Login";
+            });
 
             //var filePath = Path.Combine(_env.ContentRootPath, "is_cert.pfx");
             //var certificate = new X509Certificate2(filePath, "password");
 
             services.AddIdentityServer()
-                //.AddAspNetIdentity<IdentityUser>()
+                .AddAspNetIdentity<IdentityUser>()
                 //.AddSigningCredential(certificate);
                 .AddInMemoryApiResources(Configuration.GetApis())
-                //.AddInMemoryIdentityResources(Configuration.GetIdentityResources())
+                .AddInMemoryIdentityResources(Configuration.GetIdentityResources())
                 .AddInMemoryClients(Configuration.GetClients())
                 .AddInMemoryApiScopes(Configuration.GetScopes())
                 .AddInMemoryPersistedGrants()

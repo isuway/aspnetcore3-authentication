@@ -17,6 +17,12 @@ namespace ApiTwo.Controllers
         [Route("/home")]
         public async Task<IActionResult> Index()
         {
+            return Ok("ApiTwo HomePage. Use /home/call");
+        }
+
+        [Route("/home/call")]
+        public async Task<IActionResult> CallAction()
+        {
             //retrieve access token
             var serverClient = _httpClientFactory.CreateClient();
 
@@ -42,8 +48,8 @@ namespace ApiTwo.Controllers
 
             return Ok(new
             {
-                access_token = tokenResponse.AccessToken,
                 message = content,
+                access_token = tokenResponse.AccessToken,
             });
         }
     }

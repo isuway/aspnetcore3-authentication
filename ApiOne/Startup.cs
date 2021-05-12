@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -7,6 +8,13 @@ namespace ApiOne
 {
     public class Startup
     {
+        private readonly IConfiguration _config;
+        private readonly IWebHostEnvironment _env;
+        public Startup(IConfiguration config, IWebHostEnvironment env)
+        {
+            _config = config;
+            _env = env;
+        }
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAuthentication("Bearer")

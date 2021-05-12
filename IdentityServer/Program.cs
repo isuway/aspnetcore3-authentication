@@ -1,4 +1,7 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace IdentityServer
@@ -7,7 +10,19 @@ namespace IdentityServer
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+
+            using (var scope = host.Services.CreateScope())
+            {
+                var userManager = scope.ServiceProvider
+                    .GetRequiredService<UserManager<IdentityUser>>();
+
+                var user = new IdentityUser("bob");
+                userManager.CreateAsync(user, "password").GetAwaiter().GetResult();
+                userManager.AddClaimAsync(user, new Claim("rc.pc", "extra.cookie")).GetAwaiter().GetResult();
+            }
+
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
